@@ -1,0 +1,1 @@
+# In the images folder is the collection of images for classification

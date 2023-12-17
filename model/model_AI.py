@@ -311,14 +311,14 @@ X_train, y_train, X_test, y_test = load_data()
 # print(X_train.shape)
 
 # Delete existing model to refresh
-# if os.path.exists('./model/project_model.h5'):
-#     os.remove('./model/project_model.h5')
+if os.path.exists('./model/project_model.h5'):
+    os.remove('./model/project_model.h5')
 # Make model 
-# build_model()
+build_model()
 
 # Run evaluate_model function
-# model = tf.keras.models.load_model('./model/project_model.h5')
-# evaluate_model(model, X_train, y_train, X_test, y_test)
+model = tf.keras.models.load_model('./model/project_model.h5')
+evaluate_model(model, X_train, y_train, X_test, y_test)
 
 # Show train image and test image
 # Tree_Data.train_image()

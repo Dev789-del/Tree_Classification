@@ -1,6 +1,6 @@
 from tkinter import *  
 import sys
-sys.path.append('C:\\Users\\Nguyen Quang Huy\\OneDrive\\Desktop\\Tree_Classification_with_Image\\model')
+sys.path.append('C:\\Users\\Nguyen Quang Huy\\OneDrive\\Desktop\\Tree_Classification\\model')
 import model_AI
 from model_AI import *
 

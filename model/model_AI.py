@@ -172,8 +172,8 @@ class Tree_Data:
         df['image_widths'] = image_widths
         df.to_csv('./model/test.csv', index=False)
 #Set parameters
-batch_size = 50 # Number of images to be considered in each batch
-epochs = 10 # Number of times the entire dataset is passed through the network
+batch_size = 50
+epochs = 12
 num_classes = 10
 
 def load_data():
@@ -240,25 +240,23 @@ def build_model():
 
     model.add(Dense(512))
     model.add(Activation('relu'))
-    model.add(Dense(5, activation='softmax'))
+    model.add(Dense(10, activation='softmax'))
 
     #Save model
     model.save('./model/project_model.h5')
 
-#Evaluate model and fix ValueError: Shapes (50, 5) and (50, 1) are incompatible
+#Evaluate model and fix ValueError: Shapes (None, 10) and (None, 5) are incompatible
 def evaluate_model(model, X_train, y_train, X_test, y_test):
     #Compile model
-    model.compile(loss='categorical_crossentropy',
-                optimizer='adam',
-                metrics=['accuracy'])
-
+    model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
     #Fit model
-    model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_split=0.1)
-
+    model.fit(X_train, y_train, batch_size = batch_size, epochs = epochs, validation_split = 0.1)
     #Evaluate model
-    score = model.evaluate(X_test, y_test, verbose=0)
+    score = model.evaluate(X_test, y_test)
     print('Test loss: ', score[0])
     print('Test accuracy: ', score[1])
+    #Make prediction on 1 test image
+    predict_image(model, X_test, y_test)
 
 #Make prediction on 1 test image
 def predict_image(model, X_test, y_test):

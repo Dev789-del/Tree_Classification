@@ -255,32 +255,54 @@ def evaluate_model(model, X_train, y_train, X_test, y_test):
     score = model.evaluate(X_test, y_test)
     print('Test loss: ', score[0])
     print('Test accuracy: ', score[1])
-    #Make prediction on 1 test image
     
+def make_validation_csv():
+    #Delete test csv file if it exists
+    if os.path.exists('./model/validation.csv'):
+        os.remove('./model/validation.csv')
+    #Define array to store image data   
+    image_label = []
+    image_names = []
 
-#Make prediction on 1 test image
+    #Get tree names and set image label
+    for filename in glob.glob('./images/*.jpg'):
+        image_label.append(filename.split('\\')[-1].split('.')[0])
+        image_names.append(filename.split('\\')[-1])
+    image_label = sorted(image_label)
+    image_names = sorted(image_names)
+    #Create dataframe
+    df = pd.DataFrame()
+    df['image_label'] = image_label
+    df['image_names'] = image_names
+    df.to_csv('./model/validation.csv', index=False)
+ 
+#Predict a random image and show predicted label, actual label and image name 
 def predict_image(model, X_test, y_test):
-    #Get random image from test data
-    random_image = np.random.randint(0, len(X_test))
-    image = X_test[random_image]
+    #Load validation csv file
+    validation_data = pd.read_csv('./model/validation.csv')
+    #Get random image
+    random_image = validation_data.sample(n=1)
+    #Get image name, image label
+    image_name = random_image['image_names'].values[0]
+    image_label = random_image['image_label'].values[0]
+    #Get image
+    image = cv2.imread('./images/' + image_name)
+    image = cv2.resize(image, (299, 299))
+    image = np.array(image)
     image = image.reshape((1, 299, 299, 3))
     #Predict image
-    prediction = model.predict(image)
-    #Get label of predicted image
-    prediction = np.argmax(prediction)
-    #Get label of actual image
-    actual = y_test[random_image]
-    #Get image name
-    image_name = y_test[random_image]
-    #Print actual and predicted label
-    print('Actual label: ', actual)
-    print('Predicted label: ', prediction)
+    predict_image = model.predict(image)
+    predict_image = np.argmax(predict_image, axis=1)
+    #Get predict label
+    predict_label = y_test[predict_image[0]]
+    
+    #Show predicted label, actual label and image name
+    print('Predicted label: ', predict_label)
+    print('Actual label: ', image_label)
+    print('Image name: ', image_name)
     #Show image
-    image = cv2.imread('./new_dataset/test/' + image_name)
-    plt.imshow(image)
+    plt.imshow(image.reshape(299, 299, 3))
     plt.show()
-
-
 #Describe the csv file
 def describe_csv():
     #Load data from train.csv
@@ -306,7 +328,8 @@ def describe_csv():
 # print(test_data.describe())
 # #Run load_data function
 X_train, y_train, X_test, y_test = load_data()
-# print(X_train.shape)
+#Make validation csv file
+make_validation_csv()
 
 # Delete existing model to refresh
 # if os.path.exists('./model/project_model.h5'):

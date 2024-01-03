@@ -1,11 +1,21 @@
-image_label
-African_tulip
-Alstonia_scholaris
-Banyan_tree
-Coconut_tree
-Ficus_religiosa
-Mango
-Quecus_robur
-Rhododendron_tree
-Royal_poinciana
-Silver_birch
+image_label,tree_name
+1,Aloe vera
+2,Angel’s_Trumpet
+3,Apple_tree
+4,Atiso
+5,Banana
+6,Banyan
+7,Cactus
+8,Coconut
+9,Golden_shower
+10,Longan
+11,Mango
+12,Mangrove
+13,Peach_blossom
+14,Pine_tree
+15,Potato
+16,Red_pepper
+17,Rhododendron
+18,Royal_Poinciana
+19,Tomato
+20,Triticum aestivum

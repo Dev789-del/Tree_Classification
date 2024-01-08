@@ -111,7 +111,7 @@ class Tree_Data:
         #Get tree names and set image label
         for filename in glob.glob('./new_dataset/train/*/*.png'):
             image_names.append(filename.split('\\')[-1])
-            image_labels.append(filename.split('\\')[-1].split('.')[0])
+            image_labels.append(filename.split('\\')[-2])
             image = Image.open(filename)
             image_heights.append(image.height)
             image_widths.append(image.width)
@@ -189,9 +189,7 @@ class Tree_Data:
         df['image_names'] = image_names
         df['image_labels'] = image_labels
         df.to_csv('./model/test.csv', index = False)
-#Set parameters
-batch_size = 54
-epochs = 10
+
 
 def load_data():
     #Split data into X_train, y_train, X_test, y_test
@@ -243,15 +241,18 @@ def build_model():
     #fifth layer
     model.add(Flatten())
 
-    #sixth layer
-    model.add(Dense(512))
+    # sixth layer
+    model.add(Dense(256)) 
     model.add(Activation('relu'))
-    model.add(Dense(10, activation='softmax'))
+    model.add(Dense(20, activation='softmax'))
 
     #Save model
-    model.save('./model/project_model.h5')
+    model.save('./model/project_model.keras')
 
-#Evaluate model and fix ValueError: Shapes (None, 1) and (None, 10) are incompatible
+#Set batch size and epochs for 2718 images
+batch_size = 9 
+epochs = 10
+#Evaluate model 
 def evaluate_model(model, X_train, y_train, X_test, y_test):
     #Encode y_train, y_test
     y_train = le.fit_transform(y_train)
@@ -259,16 +260,18 @@ def evaluate_model(model, X_train, y_train, X_test, y_test):
     #Convert y_train, y_test to categorical
     y_train = to_categorical(y_train)
     y_test = to_categorical(y_test)
+
     #Compile model
-    model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
-    #Fit model
-    model.fit(X_train, y_train, batch_size = batch_size, epochs = epochs, validation_split = 0.1)
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+
+    #Fit model with 151 steps per epoch and 10 epochs
+    model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, validation_data=(X_test, y_test))
     #Evaluate model
     score = model.evaluate(X_test, y_test)
     print("Test loss: ", score[0])
     print("Test accuracy: ", score[1])
     #Save model
-    model.save('./model/project_model.h5')
+    model.save('./model/project_model.keras')
     
 def make_validation_csv():
     #Delete test csv file if it exists
@@ -305,11 +308,11 @@ def predict_image(model):
         #Load data from validation.csv
         validation_data = pd.read_csv('./model/validation.csv')
         #Convert predicted label to tree name in validation.csv by using predicted label as index
-        predicted_label = validation_data['image_label'][int(predicted_label)]
+        predicted_label = validation_data['tree_name'][int(predicted_label)]
         #Get actual label from folder name of selected image
         actual_label = path.split('/')[-2]
         #Convert actual label to tree name in validation.csv by using actual label as index
-        actual_label = validation_data['image_label'][int(actual_label)-1]
+        actual_label = validation_data['tree_name'][int(actual_label)-1]
         #Show predicted label, actual label and image name
         print("Predicted label: ", predicted_label)
         print("Actual label: ", actual_label)
@@ -317,26 +320,18 @@ def predict_image(model):
         # Show image
         plt.imshow(image.reshape(299, 299, 3))
         plt.show()
-        
-# Generate train image and test image
-# Tree_Data.generate_train_image()
-# Tree_Data.generate_test_image()
-# Make train csv file and test csv file
-Tree_Data.make_train_csv()
-Tree_Data.make_test_csv()
-# Make validation csv file
-# make_validation_csv()
+
 #Load data
 # X_train, y_train, X_test, y_test = load_data()
 # Delete existing model to refresh
-# if os.path.exists('./model/project_model.h5'):
-    # os.remove('./model/project_model.h5')
+# if os.path.exists('./model/project_model.keras'):
+    # os.remove('./model/project_model.keras')
 #  Make model 
 # build_model()
 # Run evaluate_model function
-# model = tf.keras.models.load_model('./model/project_model.h5')
+model = tf.keras.models.load_model('./model/project_model.keras')
 # evaluate_model(model, X_train, y_train, X_test, y_test)
-# predict_image(model)
+predict_image(model)
 # Show train image and test image
 # Tree_Data.train_image()
 # Tree_Data.test_image()

@@ -9,7 +9,6 @@ def describe_train_csv():
 
     #Describe the csv file
     print(train_data.describe())
-    print(train_data.info())
 
 #Describe test csv data
 def describe_test_csv():
@@ -20,7 +19,6 @@ def describe_test_csv():
 
     #Describe the csv file
     print(test_data.describe())
-    print(test_data.info())
 
 print('Train data:')
 describe_train_csv()
